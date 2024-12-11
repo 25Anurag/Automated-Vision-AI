@@ -1,0 +1,4 @@
+$env:PYTHONPATH="G:\Anurag\ai_camera_project\camera_app\yolov5_brand;$env:PYTHONPATH"
+
+
+python manage.py runserver

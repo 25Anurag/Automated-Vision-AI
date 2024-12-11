@@ -1,0 +1,5 @@
+train: ../dataset/detection/train/images 
+val: ../dataset/detection/val/images    
+
+nc: 3  # Number of classes (apple, banana, orange)
+names: ['apple', 'banana', 'orange']

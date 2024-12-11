@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ task_title }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; color: #333; }
+        header { background-color: #4CAF50; color: white; padding: 10px 20px; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; }
+        .navbar h1 { margin: 0; }
+        .navbar ul { list-style: none; padding: 0; margin: 0; display: flex; }
+        .navbar ul li { margin: 0 10px; }
+        .navbar ul li a { color: white; text-decoration: none; font-weight: bold; }
+        main { padding: 20px; text-align: center; }
+        .camera-feed { margin: 30px auto; width: 80%; max-width: 600px; background: #ddd; border: 1px solid #ccc; height: 400px; display: flex; justify-content: center; align-items: center; }
+        .controls { margin: 20px; }
+        .controls button { padding: 10px 15px; font-size: 16px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; margin: 5px; cursor: pointer; }
+        .controls button:hover { background-color: #45a049; }
+        .results { margin-top: 20px; }
+        footer { background-color: #333; color: white; text-align: center; padding: 10px 0; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <h1>AI Camera Application</h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/brand-detection">Brand Detection</a></li>
+                    <li><a href="/expiry-detection">Expiry Detection</a></li>
+                    <li><a href="/item-counting">Item Counting</a></li>
+                    <li><a href="/freshness-detection">Freshness Detection</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <h2>{{ task_heading }}</h2>
+        <div class="camera-feed">
+            <img id="video-stream" src="{% url 'brand-detection-stream' %}" alt="Brand Detection Stream" />
+        </div>
+        <div class="controls">
+            <button id="start-btn">Start Camera</button>
+            <button id="stop-btn" style="display:none;">Stop Camera</button>
+        </div>
+        <div class="results">
+            <p>Results will be displayed here</p>
+            <table id="brand-counts" style="width: 50%; margin: 0 auto; text-align: left; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th>Brand</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Lays</td>
+                        <td id="lays-count">0</td>
+                    </tr>
+                    <tr>
+                        <td>Oreo</td>
+                        <td id="oreo-count">0</td>
+                    </tr>
+                    <tr>
+                        <td>Nivea</td>
+                        <td id="nivea-count">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2024 AI Camera Application | All rights reserved.</p>
+    </footer>
+
+    <script>
+        const startBtn = document.getElementById("start-btn");
+        const stopBtn = document.getElementById("stop-btn");
+        const videoStream = document.getElementById("video-stream");
+
+        startBtn.addEventListener("click", () => {
+            fetch("{% url 'start-stream' %}")
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.status);
+                    startBtn.style.display = "none";
+                    stopBtn.style.display = "block";
+                    videoStream.style.display = "block";
+                });
+        });
+
+        stopBtn.addEventListener("click", () => {
+            fetch("{% url 'stop-stream' %}")
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.status);
+                    startBtn.style.display = "block";
+                    stopBtn.style.display = "none";
+                    videoStream.style.display = "none";
+                });
+        });
+
+        // Function to update the brand counts dynamically
+        function updateBrandCount(brand, count) {
+            const countElement = document.getElementById(`${brand}-count`);
+            countElement.textContent = count;
+        }
+
+        // Polling function to update brand counts from backend
+        setInterval(() => {
+            fetch("{% url 'get-brand-counts' %}")
+                .then(response => response.json())
+                .then(data => {
+                    updateBrandCount('lays', data.lays);
+                    updateBrandCount('oreo', data.oreo);
+                    updateBrandCount('nivea', data.nivea);
+                });
+        }, 1000); // Update every second
+    </script>
+</body>
+</html> 
+
