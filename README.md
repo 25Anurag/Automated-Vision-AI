@@ -28,7 +28,7 @@ Automated Vision AI is a cutting-edge solution that leverages computer vision an
 
 ### 1. Clone the repository
 
-git clone https://github.com/yourusername/Automated-Vision-AI.git
+git clone https://github.com/25Anurag/Automated-Vision-AI/tree/main
 cd Automated-Vision-AI
 
 
@@ -48,9 +48,9 @@ Ensure the YOLOv5 models (for brand, fruit, etc.) are properly trained and place
 
 ### 5. Run Django Development Server
 
-```bash
+
 python manage.py runserver
-```
+
 
 Your application should now be accessible at `http://127.0.0.1:8000`.
 
