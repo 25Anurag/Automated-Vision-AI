@@ -41,7 +41,7 @@
     <main>
         <h2>{{ task_heading }}</h2>
         <div class="camera-feed">
-            <img id="video-stream" src="{% url 'brand-detection-stream' %}" alt="Brand Detection Stream" />
+            <video id="video-stream" autoplay playsinline style="width: 100%; height: auto;"></video>
         </div>
         <div class="controls">
             <button id="start-btn">Start Camera</button>
@@ -120,7 +120,40 @@
                     updateBrandCount('oreo', data.oreo);
                     updateBrandCount('nivea', data.nivea);
                 });
-        }, 1000); // Update every second
+        }, 1000); // Update ever'y second
+        const videoElement = document.getElementById('video-stream');
+        const startButton = document.getElementById('start-btn');
+        const stopButton = document.getElementById('stop-btn');
+        let mediaStream = null;
+
+        startButton.addEventListener('click', async () => {
+            try {
+                // Request access to the camera
+                mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoElement.srcObject = mediaStream;
+
+                // Toggle button visibility
+                startButton.style.display = 'none';
+                stopButton.style.display = 'inline-block';
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+            }
+        });
+
+        stopButton.addEventListener('click', () => {
+            // Stop the camera stream
+            if (mediaStream) {
+                const tracks = mediaStream.getTracks();
+                tracks.forEach(track => track.stop());
+                mediaStream = null;
+            }
+            videoElement.srcObject = null;
+
+            // Toggle button visibility
+            startButton.style.display = 'inline-block';
+            stopButton.style.display = 'none';
+        });
+
     </script>
 </body>
 </html> 
